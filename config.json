@@ -15,7 +15,7 @@
   "regions_any": ["Europe", "EMEA", "France", "Ireland", "EU", "UK", "United Kingdom"],
   "countries_iso2": ["FR","IE","DE","NL","BE","ES","IT","PT","SE","NO","DK","FI","AT","CH","GB"],
   "max_results_per_source": 200,
-  "send_if_empty": false,
+  "send_if_empty": true,
   "email_subject": "Daily EU-Remote Java/Spring (0–1 yr) — Digest",
   "from_name": "Job Notifier",
   "min_desc_len": 10
