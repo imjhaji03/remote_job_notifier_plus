@@ -1,0 +1,18 @@
+{
+  "greenhouse": [
+    "datadog",
+    "elastic",
+    "okta",
+    "aircall"
+  ],
+  "lever": [
+    "duolingo",
+    "checkoutcom",
+    "bytedance"
+  ],
+  "ashby": [
+    "stripe",
+    "figma",
+    "linear"
+  ]
+}
