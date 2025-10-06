@@ -247,6 +247,11 @@ def render_insights(jobs, cfg):
     """
 
 def send_email(html, cfg):
+    import ssl, smtplib
+    from email.mime.text import MIMEText
+    from email.utils import formatdate
+
+    # Read envs (with safe port parsing)
     host = os.environ.get("SMTP_HOST", "")
     port_raw = os.environ.get("SMTP_PORT", "587")
     try:
@@ -259,6 +264,7 @@ def send_email(html, cfg):
     sender = os.environ.get("EMAIL_FROM")
     to     = os.environ.get("EMAIL_TO")
 
+    # Tell exactly what's missing
     missing = [name for name, val in [
         ("SMTP_HOST", host),
         ("SMTP_USER", user),
@@ -269,7 +275,27 @@ def send_email(html, cfg):
 
     if missing:
         print("Missing envs:", ", ".join(missing))
+        return False  # always return False instead of None
+
+    # Build the message
+    msg = MIMEText(html, "html", "utf-8")
+    msg["Subject"] = cfg.get("email_subject", "Daily Remote Jobs Digest")
+    msg["From"] = sender
+    msg["To"] = to
+    msg["Date"] = formatdate(localtime=True)
+
+    # Try sending
+    ctx = ssl.create_default_context()
+    try:
+        with smtplib.SMTP(host, port) as server:
+            server.starttls(context=ctx)
+            server.login(user, pw)
+            server.sendmail(sender, [to], msg.as_string())
+        return True
+    except Exception as e:
+        print("SMTP send failed:", repr(e))
         return False
+
 
 
 def render_email(jobs_new, links, cfg):
