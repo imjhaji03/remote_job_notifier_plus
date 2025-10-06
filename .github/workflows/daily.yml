@@ -17,33 +17,42 @@ jobs:
         with:
           python-version: "3.11"
 
+      # TEMP: sanity check which items are set (no values printed)
+      - name: Check required SMTP items (set vs missing)
+        run: |
+          test -n "${{ secrets.SMTP_HOST || vars.SMTP_HOST }}" && echo "SMTP_HOST: set" || echo "SMTP_HOST: MISSING"
+          test -n "${{ secrets.SMTP_PORT || vars.SMTP_PORT }}" && echo "SMTP_PORT: set" || echo "SMTP_PORT: MISSING"
+          test -n "${{ secrets.SMTP_USER || vars.SMTP_USER }}" && echo "SMTP_USER: set" || echo "SMTP_USER: MISSING"
+          test -n "${{ secrets.SMTP_PASS || vars.SMTP_PASS }}" && echo "SMTP_PASS: set" || echo "SMTP_PASS: MISSING"
+          test -n "${{ secrets.EMAIL_FROM || vars.EMAIL_FROM }}" && echo "EMAIL_FROM: set" || echo "EMAIL_FROM: MISSING"
+          test -n "${{ secrets.EMAIL_TO || vars.EMAIL_TO }}" && echo "EMAIL_TO: set" || echo "EMAIL_TO: MISSING"
+
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Runnotifier
+      - name: Run notifier
         env:
-          # SMTP (with safe fallback for empty SMTP_PORT)
-          SMTP_HOST: ${{ secrets.SMTP_HOST }}
-          SMTP_PORT: ${{ secrets.SMTP_PORT || '587' }}          # <-- fallback added
-          SMTP_USER: ${{ secrets.SMTP_USER }}
-          SMTP_PASS: ${{ secrets.SMTP_PASS }}
-          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
-          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          # SMTP (Secrets first, then Variables). Fallback ports included.
+          SMTP_HOST: ${{ secrets.SMTP_HOST || vars.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT || vars.SMTP_PORT || '587' }}
+          SMTP_USER: ${{ secrets.SMTP_USER || vars.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS || vars.SMTP_PASS }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM || vars.EMAIL_FROM }}
+          EMAIL_TO:   ${{ secrets.EMAIL_TO   || vars.EMAIL_TO   }}
 
           # Optional feeds
-          ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
-          ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+          ADZUNA_APP_ID:  ${{ secrets.ADZUNA_APP_ID  || vars.ADZUNA_APP_ID  }}
+          ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY || vars.ADZUNA_APP_KEY }}
 
-          # Optional Gmail alerts (with safe fallback for empty IMAP_PORT)
-          IMAP_HOST: ${{ secrets.IMAP_HOST }}
-          IMAP_PORT: ${{ secrets.IMAP_PORT || '993' }}          # optional fallback
-          IMAP_USER: ${{ secrets.IMAP_USER }}
-          IMAP_PASS: ${{ secrets.IMAP_PASS }}
-          IMAP_LABEL: ${{ secrets.IMAP_LABEL }}
+          # Optional Gmail alerts (with default IMAP_PORT)
+          IMAP_HOST:  ${{ secrets.IMAP_HOST  || vars.IMAP_HOST  }}
+          IMAP_PORT:  ${{ secrets.IMAP_PORT  || vars.IMAP_PORT  || '993' }}
+          IMAP_USER:  ${{ secrets.IMAP_USER  || vars.IMAP_USER  }}
+          IMAP_PASS:  ${{ secrets.IMAP_PASS  || vars.IMAP_PASS  }}
+          IMAP_LABEL: ${{ secrets.IMAP_LABEL || vars.IMAP_LABEL }}
 
-          # Logging
           PYTHONUNBUFFERED: "1"
         run: python job_notifier.py
 
