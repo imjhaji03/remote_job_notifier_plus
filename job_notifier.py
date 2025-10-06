@@ -359,12 +359,19 @@ def main():
             print("IMAP ingestion failed:", e)
             links = []
 
-    html = render_email(new_jobs, links, cfg)
-    sent = send_email(html, cfg)
+    # Decide if we should send email
+    should_send = bool(new_jobs or links or cfg.get("send_if_empty", False))
+    if not should_send:
+        print("Nothing to send (no new jobs, no links, send_if_empty is False).")
+        sent = False
+    else:
+        html = render_email(new_jobs, links, cfg)
+        sent = send_email(html, cfg)
+
     print("Sent:", sent, "New jobs:", len(new_jobs), "Links:", len(links))
 
-    # update seen after sending
-    for j in all_jobs: 
+    # Save seen job IDs
+    for j in all_jobs:
         seen.add(j["id"])
     os.makedirs(os.path.dirname(STATE_PATH), exist_ok=True)
     with open(STATE_PATH, "w", encoding="utf-8") as f:
@@ -372,3 +379,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
