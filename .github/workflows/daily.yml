@@ -22,7 +22,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run notifier
+      - name: Runnotifier
         env:
           # SMTP (with safe fallback for empty SMTP_PORT)
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
