@@ -247,21 +247,30 @@ def render_insights(jobs, cfg):
     """
 
 def send_email(html, cfg):
-    host = os.environ.get("SMTP_HOST"); port = int(os.environ.get("SMTP_PORT", "587"))
-    user = os.environ.get("SMTP_USER"); pw = os.environ.get("SMTP_PASS")
-    sender = os.environ.get("EMAIL_FROM"); to = os.environ.get("EMAIL_TO")
-    if not all([host, port, user, pw, sender, to]):
-        print("Missing SMTP or EMAIL_* env vars; skipping email.")
+    host = os.environ.get("SMTP_HOST", "")
+    port_raw = os.environ.get("SMTP_PORT", "587")
+    try:
+        port = int(port_raw) if str(port_raw).strip() else 587
+    except ValueError:
+        port = 587
+
+    user   = os.environ.get("SMTP_USER")
+    pw     = os.environ.get("SMTP_PASS")
+    sender = os.environ.get("EMAIL_FROM")
+    to     = os.environ.get("EMAIL_TO")
+
+    missing = [name for name, val in [
+        ("SMTP_HOST", host),
+        ("SMTP_USER", user),
+        ("SMTP_PASS", pw),
+        ("EMAIL_FROM", sender),
+        ("EMAIL_TO", to),
+    ] if not val]
+
+    if missing:
+        print("Missing envs:", ", ".join(missing))
         return False
-    msg = MIMEText(html, "html", "utf-8")
-    msg["Subject"] = cfg.get("email_subject", "Daily Remote Jobs Digest")
-    msg["From"] = sender; msg["To"] = to; msg["Date"] = formatdate(localtime=True)
-    ctx = ssl.create_default_context()
-    with smtplib.SMTP(host, port) as server:
-        server.starttls(context=ctx)
-        server.login(user, pw)
-        server.sendmail(sender, [to], msg.as_string())
-    return True
+
 
 def render_email(jobs_new, links, cfg):
     rows = []
