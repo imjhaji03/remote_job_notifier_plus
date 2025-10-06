@@ -12,29 +12,41 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
       - name: Run notifier
         env:
+          # SMTP (with safe fallback for empty SMTP_PORT)
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
-          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT || '587' }}          # <-- fallback added
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
+
+          # Optional feeds
           ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
           ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+
+          # Optional Gmail alerts (with safe fallback for empty IMAP_PORT)
           IMAP_HOST: ${{ secrets.IMAP_HOST }}
-          IMAP_PORT: ${{ secrets.IMAP_PORT }}
+          IMAP_PORT: ${{ secrets.IMAP_PORT || '993' }}          # optional fallback
           IMAP_USER: ${{ secrets.IMAP_USER }}
           IMAP_PASS: ${{ secrets.IMAP_PASS }}
           IMAP_LABEL: ${{ secrets.IMAP_LABEL }}
+
+          # Logging
+          PYTHONUNBUFFERED: "1"
         run: python job_notifier.py
+
       - name: Commit state
         run: |
           git config user.name "github-actions[bot]"
