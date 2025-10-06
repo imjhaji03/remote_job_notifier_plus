@@ -1,18 +1,5 @@
 {
-  "greenhouse": [
-    "datadog",
-    "elastic",
-    "okta",
-    "aircall"
-  ],
-  "lever": [
-    "duolingo",
-    "checkoutcom",
-    "bytedance"
-  ],
-  "ashby": [
-    "stripe",
-    "figma",
-    "linear"
-  ]
+  "greenhouse": ["duolingo", "stripe", "figma"],
+  "lever": ["aircall"],
+  "ashby": ["Linear"]
 }

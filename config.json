@@ -1,54 +1,22 @@
 {
-  "keywords": [
-    "java",
-    "spring",
-    "spring boot",
-    "backend",
-    "microservices",
-    "aws",
-    "mysql"
-  ],
-  "extra_keywords_any": [
-    "kotlin",
-    "hibernate",
-    "spring data",
-    "spring security",
-    "docker",
-    "kubernetes",
-    "postgres",
-    "mongodb",
-    "rest api",
-    "jpa"
-  ],
-  "regions_any": [
-    "Europe",
-    "EMEA",
-    "France",
-    "Ireland",
-    "EU",
-    "UK",
-    "United Kingdom"
-  ],
-  "countries_iso2": [
-    "FR",
-    "IE",
-    "DE",
-    "NL",
-    "BE",
-    "ES",
-    "IT",
-    "PT",
-    "SE",
-    "NO",
-    "DK",
-    "FI",
-    "AT",
-    "CH",
-    "GB"
-  ],
+  "keywords": ["java", "spring", "spring boot", "backend", "microservices", "aws", "mysql"],
+  "extra_keywords_any": ["kotlin", "hibernate", "spring data", "spring security", "docker", "kubernetes", "postgres", "mongodb", "rest api", "jpa"],
+
+  "title_must_include_any": ["backend", "java", "sde", "software developer", "software engineer", "sdet", "spring"],
+  "title_exclude_any": ["senior", "staff", "principal", "lead", "manager", "architect", "director", "sr.", "sr "],
+
+  "experience_filter": {
+    "enabled": true,
+    "max_years_inclusive": 1,
+    "positive_markers_any": ["0-1", "0 to 1", "0 – 1", "0—1", "0/1", "0 years", "1 year", "≤1", "entry level", "junior", "graduate", "new grad", "early career", "L1", "Level 1"],
+    "negative_markers_any": ["2+ years", "2 years", "3+ years", "3 years", "mid-level", "mid level", "intermediate", "senior", "staff", "principal", "lead"]
+  },
+
+  "regions_any": ["Europe", "EMEA", "France", "Ireland", "EU", "UK", "United Kingdom"],
+  "countries_iso2": ["FR","IE","DE","NL","BE","ES","IT","PT","SE","NO","DK","FI","AT","CH","GB"],
   "max_results_per_source": 200,
   "send_if_empty": false,
-  "email_subject": "Daily EU-Remote Java/Spring Jobs \u2014 Digest",
+  "email_subject": "Daily EU-Remote Java/Spring (0–1 yr) — Digest",
   "from_name": "Job Notifier",
   "min_desc_len": 10
 }
